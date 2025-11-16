@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tourism & Monuments - Pro Edition</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear linear-gradient(to right,rgb(221, 188, 40),rgb(219, 147, 13));
+    color: #34495e;
+    margin: 0; padding: 0 0 3rem 0;
+    scroll-behavior: smooth;
+  }
+  header {
+    background-color: #1f4068;
+    padding: 1.2rem 0;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #ecf0f1;
+    box-shadow: 0 4px 10px rgba(31,64,104,0.4);
+    position: sticky;
+    top: 0;
+    z-index: 1500;
+    user-select: none;
+  }
+  nav {
+    background: #2c5877;
+    display: flex;
+    justify-content: center;
+    box-shadow: inset 0 -2px 6px #285269cc;
+    user-select:none;
+    position: sticky;
+    top: 58px; /* header height */
+    z-index: 1400;
+    
+    
+  }
+  nav button {
+    font-family: 'Poppins', sans-serif;
+    background: none;
+    border: none;
+    padding: 1rem 1.8rem;
+    cursor: pointer;
+    font-size: 1.12rem;
+    color: #dff7ff;
+    font-weight: 600;
+    border-radius: 18px 18px 0 0;
+    transition: all 0.3s ease;
+    margin: 0 0.25rem;
+  }
+  nav button:hover, nav button.active {
+    background: #88c9fa;
+    color: #10375c;
+    box-shadow: 0 5px 15px rgba(136,201,250,0.4);
+  }
+  main {
+    max-width: 970px;
+    margin: 2rem auto 4rem auto;
+  }
+  /* Homepage with Taj Mahal background overlay */
+  #home {
+    position: relative;
+    height: 500px;
+    color: #f5f6f7;
+    text-align: center;
+    font-weight: 300;
+    user-select:none;
+    margin-bottom: 3rem;
+  }
+  #home::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/da/Taj-Mahal.jpg');
+    background-position: center;
+    background-size: cover;
+    opacity: 0.30;
+    filter: brightness(0.75) saturate(1.2);
+    z-index: 1;
+    border-radius: 15px;
+  }
+  #home-content {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 22px;
+    padding: 2.8rem 3rem;
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.15);
+    color: #1f2c40;
+  }
+  #home-content h2 {
+    font-size: 2.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1a3c60;
+  }
+  #home-content p {
+    font-weight: 400;
+    font-size: 1.18rem;
+    line-height: 1.6;
+    color: #2d4462;
+  }
+  section {
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 8px 20px rgb(31 64 104 / 0.07);
+    padding: 2rem 3rem 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+  h2 {
+    color: #1a3c60;
+    font-weight: 600;
+    font-size: 1.85rem;
+    margin-bottom: 1.3rem;
+    border-bottom: 3px solid #86b9fc;
+    padding-bottom: 0.4rem;
+    user-select:none;
+  }
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.3rem;
+    justify-content: center;
+  }
+  .spot {
+    background: #f7fbff;
+    border-radius: 15px;
+    cursor: pointer;
+    padding: 0.6rem;
+    width: 280px;
+    box-shadow: inset 0 0 18px #b7d4f9;
+    text-align: center;
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+    user-select:none;
+  }
+  .spot:hover {
+    transform: scale(1.06);
+    box-shadow: 0 15px 30px rgba(63, 146, 246, 0.25);
+  }
+  .spot img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 7px 18px rgba(31, 64, 104, 0.15);
+    user-select:none;
+  }
+  .spot-name {
+    color: #2466a6;
+    font-weight: 600;
+    margin-top: 0.6rem;
+    font-size: 1.1rem;
+  }
+  #popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(13,26,51,0.8);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    user-select:none;
+    padding: 1rem;
+  }
+  #popup-content {
+    position: relative;
+    background: linear-gradient(rgb(255, 255, 255),rgb(243, 204, 131));
+    border-radius: 20px;
+    padding: 2rem 2.4rem 3rem;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 12px 40px rgba(31, 64, 104, 0.3);
+    user-select:text;
+  }
+  #popup-content img {
+    border-radius: 18px;
+    width: 100%;
+    margin-bottom: 1.4rem;
+    box-shadow: 0 15px 28px rgba(31, 64, 104, 0.2);
+  }
+  #popup-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: #1a3c60;
+    font-weight: 700;
+    transition: color 0.25s ease;
+  }
+  #popup-close:hover {
+    color: #e63946;
+  }
+  #popup-description {
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #30475e;
+    margin-top: 0;
+    margin-bottom: 1.8rem;
+  }
+  #popup-more-images {
+    display: flex;
+    gap: 200px;
+    overflow-x: auto;
+  }
+  #popup-more-images img {
+    border-radius: 12px;
+    flex: 0 0 auto;
+    height: 400px;
+    width: 230px;
+    cursor: pointer;
+    box-shadow: 0 3px 9px rgba(31, 64, 104, 0.25);
+    transition: transform 0.25s ease;
+  }
+  #popup-more-images img:hover {
+    transform: scale(1.07);
+    box-shadow: 0 6px 20px rgba(31, 64, 104, 0.35);
+  }
+  #about p {
+    font-size: 1.12rem;
+    line-height: 1.7;
+    color: #2e4a74;
+    user-select: text;
+  }
+  @media (max-width: 800px) {
+    #home-content {
+      padding: 1.8rem 2rem;
+      font-size: 1rem;
+    }
+    .spot {
+      width: 90vw;
+    }
+    main {
+      padding: 1rem 1.5rem;
+    }
+    nav button {
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+<header>Tourist Spots & Monuments</header>
+<nav>
+  <button class="tab-btn active" data-target="home">Home</button>
+  <button class="tab-btn" data-target="india">India</button>
+  <button class="tab-btn" data-target="vietnam">Vietnam</button>
+  <button class="tab-btn" data-target="cambodia">Cambodia</button>
+  <button class="tab-btn" data-target="about">About Us</button>
+</nav>
+
+<main>
+  <section id="home">
+    <div id="home-content">
+      <h1><font color="black">Welcome to Our Tourism & Monuments Website</font></h1>
+      <p>Explore the rich heritage and iconic monuments of India, Vietnam, and Cambodia. Scroll down to learn about the top tourist destinations with beautiful images and detailed information. Your journey to discover the world’s culture and history begins here.</p>
+    </div>
+  </section>
+
+  <section id="india">
+    <h2>Top Tourist Spots of India</h2>
+    <div class="gallery">
+      <div class="spot" data-country="india" data-key="tajmahal" tabindex="0" aria-label="Taj Mahal, India">
+        <img src="Taj-Mahal (1).jpg" alt="Taj Mahal, India" />
+        <div class="spot-name">Taj Mahal</div>
+      </div>
+      <div class="spot" data-country="india" data-key="gatewayofindia" tabindex="0" aria-label="Gateway of India, Mumbai">
+        <img src="gateway.jpg" alt="Gateway of India, Mumbai" />
+        <div class="spot-name">Gateway of India</div>
+      </div>
+      <div class="spot" data-country="india" data-key="qutubminar" tabindex="0" aria-label="Qutub Minar, Delhi">
+        <img src="qutb.jpg" alt="Qutub Minar, Delhi" />
+        <div class="spot-name">Qutub Minar</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="vietnam">
+    <h2>Top Tourist Spots of Vietnam</h2>
+    <div class="gallery">
+      <div class="spot" data-country="vietnam" data-key="halongbay" tabindex="0" aria-label="Halong Bay, Vietnam">
+        <img src="halong.jpg" alt="Halong Bay, Vietnam" />
+        <div class="spot-name">Halong Bay</div>
+      </div>
+      <div class="spot" data-country="vietnam" data-key="myson" tabindex="0" aria-label="My Son Sanctuary, Vietnam">
+        <img src="my.jpg" alt="My Son Sanctuary, Vietnam" />
+        <div class="spot-name">My Son Sanctuary</div>
+      </div>
+      <div class="spot" data-country="vietnam" data-key="cuachitunnels" tabindex="0" aria-label="Cu Chi Tunnels, Vietnam">
+        <img src="cu.jpg" alt="Cu Chi Tunnels, Vietnam" />
+        <div class="spot-name">Cu Chi Tunnels</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cambodia">
+    <h2>Top Tourist Spots of Cambodia</h2>
+    <div class="gallery">
+      <div class="spot" data-country="cambodia" data-key="angkorwat" tabindex="0" aria-label="Angkor Wat, Cambodia">
+        <img src="angkor.jpg" alt="Angkor Wat, Cambodia" />
+        <div class="spot-name">Angkor Wat</div>
+      <div class="spot" data-country="cambodia" data-key="bayontemple" tabindex="0" aria-label="Bayon Temple, Cambodia">
+        <img src="bayon.jpg" alt="Bayon Temple, Cambodia" />
+        <div class="spot-name">Bayon Temple</div>
+      </div>
+      <div class="spot" data-country="cambodia" data-key="banteaysrei" tabindex="0" aria-label="Banteay Srei, Cambodia">
+        <img src="banteay.jpg" alt="Banteay Srei, Cambodia" />
+        <div class="spot-name">Banteay Srei</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2><font size="72">About Us</font></h2>
+    <img src="mckv1.jpg" height="400px" width="400px" style="margin: 15px;"><img src="mckv2.jpg" height="400px" width="400px" style="margin: 15px;">
+    <p> <h1>Recognition of an International Dimension in Schools:</h1><br>
+
+The India RIDS programme, formerly known as ISA and then IDS, rewards schools committed to embedding international awareness within their curriculum.
+
+RIDS provides a framework for schools to develop international activities across the curriculum, including collaborative work with partner schools, and opportunities to involve the wider community. Schools plan, execute and evaluate a range of project-based school activities which are then assessed against the RIDS criteria for certification.
+
+The India RIDS programme has evolved from the British Council’s global International School Award (ISA) programme which was active in 31 countries worldwide and is currently being delivered in the vUK, Greece, and Nigeria. In India, ISA/IDS ran from 2003 to 2020, reaching over 4000 private and government schools.</p>
+  </section>
+</main>
+
+<div id="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title" aria-describedby="popup-desc">
+  <div id="popup-content">
+    <button id="popup-close" aria-label="Close Popup">&times;</button>
+    <h3 id="popup-title"></h3>
+    <img id="popup-img" src="" alt="" />
+    <p id="popup-desc"></p>
+    <div id="popup-more-images"></div>
+  </div>
+</div>
+
+<script>
+  const spots = {
+    india: {
+      tajmahal: {
+        name: "Taj Mahal",
+        img: "taj.jpg",
+        info: "The Taj Mahal in Agra is a UNESCO World Heritage Site and one of the New Seven Wonders of the World. Built in the 17th century by Emperor Shah Jahan, it is an iconic symbol of love and Indian architecture.",
+        moreImgs: [
+          "taj1.jpg",
+          "taj2.jpg"
+        ]
+      },
+      gatewayofindia: {
+        name: "Gateway of India",
+        img: "gate.jpg",
+        info: "The Gateway of India in Mumbai was built in 1924 to commemorate the visit of King George V. It is a basalt arch monument and one of India's most famous landmarks reflecting colonial and Indo-Saracenic architecture.",
+        moreImgs: [
+          "gate1.jpg",
+          "gate3.jpg"
+        ]
+      },
+      qutubminar: {
+        name: "Qutub Minar",
+        img: "qutb1.jpg",
+        info: "Qutub Minar, located in Delhi, is the tallest brick minaret in the world, built in the early 13th century. It is a UNESCO World Heritage Site known for its intricate Islamic architecture and detailed carvings.",
+        moreImgs: [
+          "qutb2.jpg",
+          "qutb3.jpg"
+        ]
+      }
+    },
+    vietnam: {
+      halongbay: {
+        name: "Halong Bay",
+        img: "halong1.jpg",
+        info: "Halong Bay is a UNESCO World Heritage Site famous for its emerald waters and thousands of towering limestone islands topped with rainforests. It is one of Vietnam's most spectacular natural wonders.",
+        moreImgs: [
+          "halong2.jpg",
+          "halong3.jpg"
+        ]
+      },
+      myson: {
+        name: "My Son Sanctuary",
+        img: "my1.jpg",
+        info: "My Son Sanctuary is a cluster of abandoned Hindu temples constructed between the 4th and 14th centuries, dedicated to the god Shiva. It's a UNESCO site showcasing Cham civilization's remarkable architecture.",
+        moreImgs: [
+          "my2.jpg",
+          "my3.jpg"
+        ]
+      },
+      cuachitunnels: {
+        name: "Cu Chi Tunnels",
+        img: "cu1.jpg",
+        info: "The Cu Chi Tunnels are an extensive network of underground tunnels used during the Vietnam War. Today, they serve as a historical site demonstrating the resilience and tactics of Vietnamese guerrilla fighters.",
+        moreImgs: [
+          "cu2.jpg",
+          "cu3.jpg"
+        ]
+      }
+    },
+    cambodia: {
+      angkorwat: {
+        name: "Angkor Wat",
+        img: "angkor1.jpg",
+        info: "Angkor Wat, located in Siem Reap, Cambodia, is the largest religious monument in the world, built in the early 12th century. It is famed for its grand scale, ornate bas-reliefs, and is a UNESCO World Heritage Site.",
+        moreImgs: [
+          "angkor2.jpg",
+          "angkor3.jpg"
+        ]
+      },
+      bayontemple: {
+        name: "Bayon Temple",
+        img: "bayon1.JPG",
+        info: "Bayon Temple is at the center of the ancient city of Angkor Thom. Famous for its massive stone faces on towers, it represents Buddhist and Hindu cosmology and is an architectural masterpiece of the Khmer Empire.",
+        moreImgs: [
+          "bayon2.JPG",
+          "bayon3.JPG"
+        ]
+      },
+      banteaysrei: {
+        name: "Banteay Srei",
+        img: "ban1.JPG",
+        info: "Banteay Srei, known as the 'Citadel of Women', is a 10th-century temple dedicated to Hindu god Shiva, renowned for its intricate carvings and pink sandstone architecture.",
+        moreImgs: [
+          "ban2.JPG",
+          "ban3.JPG"
+        ]
+      }
+    }
+  };
+
+  // Tab navigation scrolling and active states
+  const tabs = document.querySelectorAll('nav button');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelector('.tab-btn.active').classList.remove('active');
+      tab.classList.add('active');
+      const targetId = tab.getAttribute('data-target');
+      // Scroll considering sticky header + nav height offset
+      const targetElem = document.getElementById(targetId);
+      const offset = document.querySelector('header').offsetHeight + document.querySelector('nav').offsetHeight;
+      const targetPos = targetElem.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({top: targetPos, behavior: 'smooth'});
+    });
+  });
+
+  // Image popup logic
+  const popup = document.getElementById('popup');
+  const popupTitle = document.getElementById('popup-title');
+  const popupImg = document.getElementById('popup-img');
+  const popupDesc = document.getElementById('popup-desc');
+  const popupMoreImgs = document.getElementById('popup-more-images');
+  const popupClose = document.getElementById('popup-close');
+
+  document.querySelectorAll('.spot').forEach(spot => {
+    spot.addEventListener('click', () => {
+      const country = spot.dataset.country;
+      const key = spot.dataset.key;
+      const data = spots[country][key];
+
+      popupTitle.textContent = data.name;
+      popupImg.src = data.img;
+      popupImg.alt = data.name;
+      popupDesc.textContent = data.info;
+
+      popupMoreImgs.innerHTML = '';
+      data.moreImgs.forEach(src => {
+        let imgEl = document.createElement('img');
+        imgEl.src = src;
+        imgEl.alt = data.name + " additional photo";
+        imgEl.style.height = '100px';
+        imgEl.style.borderRadius = '8px';
+        imgEl.style.boxShadow = '0 1px 5px rgba(31,64,104,0.3)';
+        popupMoreImgs.appendChild(imgEl);
+
+        imgEl.addEventListener('click', () => {
+          popupImg.src = src;
+          popupImg.alt = data.name + " additional photo";
+        });
+      });
+
+      popup.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  popupClose.addEventListener('click', () => {
+    popup.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  });
+
+  popup.addEventListener('click', e => {
+    if (e.target === popup) {
+      popup.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  // Optional: change active tab on scroll based on viewport
+  window.addEventListener('scroll', () => {
+    const offset = document.querySelector('header').offsetHeight + document.querySelector('nav').offsetHeight + 5;
+    let current = 'home';
+    ['home','india','vietnam','cambodia','about'].forEach(id => {
+      const sec = document.getElementById(id);
+      if (window.pageYOffset >= sec.offsetTop - offset) {
+        current = id;
+      }
+    });
+    tabs.forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-target') === current);
+    });
+  });
+</script>
+</body>
+</html>
